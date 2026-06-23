@@ -159,7 +159,6 @@ Begin
 		print 'ERROR OCCURED DURING LOADING BRONZE LAYER'
 		PRINT 'Error Message' + ERROR_Message();
 		print 'Error Message' + CAST (ERROR_NUMBER() as nvarchar);
-		print 'Error Message' + CAST (ERROR_NUMBER() as nvarchar);
 		print '==============================='
 	END CATCH
 END
