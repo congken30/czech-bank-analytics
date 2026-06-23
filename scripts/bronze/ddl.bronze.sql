@@ -73,7 +73,7 @@ IF OBJECT_ID ('bronze.loan', 'U') is not null
 Create table bronze.loan(
 	loan_id			nvarchar(50),
 	account_id		nvarchar(50),
-	date			date,
+	date			nvarchar(50),
 	amount			nvarchar(50),
 	duration		nvarchar(50),
 	payments		nvarchar(50)
