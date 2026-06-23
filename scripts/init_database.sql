@@ -17,7 +17,7 @@ USE master;
 GO
 
 -- Drop and recreate the 'CzechBankDB' database
-IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'DataWarehouse')
+IF EXISTS (SELECT 1 FROM sys.databases WHERE name = 'CzechBankDB')
 BEGIN
     ALTER DATABASE CzechBankDB SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
     DROP DATABASE CzechBankDB;
