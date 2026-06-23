@@ -33,9 +33,9 @@ Create table bronze.card(
 IF OBJECT_ID ('bronze.client', 'U') is not null 
 	DROP TABLE bronze.client;
 Create table bronze.client( 
-	client_id		varchar(50),
+	client_id		nvarchar(50),
 	birth_number	nvarchar(50),
-	district_id		varchar(50)
+	district_id		nvarchar(50)
 )
 
 IF OBJECT_ID ('bronze.disp', 'U') is not null 
@@ -44,7 +44,7 @@ Create table bronze.disp(
 	disp_id			nvarchar(50),
 	client_id		nvarchar(50), 
 	account_id		nvarchar(50),
-	type			varchar(50)
+	type			nvarchar(50)
 )
 
 IF OBJECT_ID ('bronze.district', 'U') is not null 
@@ -76,7 +76,8 @@ Create table bronze.loan(
 	date			nvarchar(50),
 	amount			nvarchar(50),
 	duration		nvarchar(50),
-	payments		nvarchar(50)
+	payments		nvarchar(50),
+	status			nvarchar(50)
 )
 
 IF OBJECT_ID ('bronze.orders', 'U') is not null 
@@ -84,10 +85,10 @@ IF OBJECT_ID ('bronze.orders', 'U') is not null
 Create table bronze.orders(
 	order_id		nvarchar(50), 
 	account_id		nvarchar(50), 
-	bank_to			varchar(10),
+	bank_to			nvarchar(50),
 	account_to		nvarchar(50), 
 	amount			nvarchar(50),
-	k_symbol		varchar(50)
+	k_symbol		nvarchar(50)
 )
 
 IF OBJECT_ID ('bronze.trans', 'U') is not null 
@@ -96,11 +97,11 @@ Create table bronze.trans(
 	trans_id		nvarchar(50), 
 	account_id		nvarchar(50), 
 	date			nvarchar(50),
-	type			varchar(50),
-	operation		varchar(50),
+	type			nvarchar(50),
+	operation		nvarchar(50),
 	amount			nvarchar(50), 
 	balance			nvarchar(50), 
 	k_symbol		nvarchar(50),
-	bank			varchar(10),
+	bank			nvarchar(50),
 	account			nvarchar(50)
 ) 
