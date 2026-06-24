@@ -11,45 +11,63 @@ Script Purpose:
 
 
 --Create schema silver;
+
+-- ===============================
+-- DROP theo thứ tự child → parent
+-- ===============================
+IF OBJECT_ID ('silver.card', 'U') is not null 
+	DROP TABLE silver.card;
+IF OBJECT_ID ('silver.disp', 'U') is not null 
+	DROP TABLE silver.disp;
+IF OBJECT_ID ('silver.loan', 'U') is not null 
+	DROP TABLE silver.loan;
+IF OBJECT_ID ('silver.orders', 'U') is not null 
+	DROP TABLE silver.orders;
+IF OBJECT_ID ('silver.trans', 'U') is not null 
+	DROP TABLE silver.trans;
 IF OBJECT_ID ('silver.account', 'U') is not null 
 	DROP TABLE silver.account;
+IF OBJECT_ID ('silver.client', 'U') is not null 
+	DROP TABLE silver.client;
+IF OBJECT_ID ('silver.district', 'U') is not null 
+	DROP TABLE silver.district;
+
+ -- ==============================
+ -- CREATE TABLE WITH PK
+ -- ==============================
 Create Table silver.account( 
 	account_id					int, 
 	district_id					int,
 	frequency					nvarchar(50),
-	date						date
+	date						date,
+	CONSTRAINT PK_account PRIMARY KEY (account_id),
+
 );
 
-IF OBJECT_ID ('silver.card', 'U') is not null 
-	DROP TABLE silver.card;
 Create table silver.card(
 	card_id						int,
 	disp_id						int,
 	type						varchar(50),
-	issued						date
+	issued						date,
+	CONSTRAINT PK_card PRIMARY KEY (card_id)
 );
 
-
-IF OBJECT_ID ('silver.client', 'U') is not null 
-	DROP TABLE silver.client;
 Create table silver.client( 
-	client_id					int,
+	client_id					int, 
+	district_id					int,
 	birth_date					date,
 	gender						varchar(10),
-	district_id					int
+	CONSTRAINT PK_client PRIMARY KEY (client_id)
 )
 
-IF OBJECT_ID ('silver.disp', 'U') is not null 
-	DROP TABLE silver.disp;
 Create table silver.disp(
 	disp_id						int,
 	client_id					int, 
 	account_id					int,
-	type						varchar(50)
+	type						varchar(50),
+	CONSTRAINT PK_disp PRIMARY KEY (disp_id)
 )
 
-IF OBJECT_ID ('silver.district', 'U') is not null 
-	DROP TABLE silver.district;
 Create table silver.district(
 	district_id					int,
 	district_name				nvarchar(50),
@@ -66,11 +84,10 @@ Create table silver.district(
 	unemployment_rate_96		decimal(5,2),
 	entrepreneurs_per_1000		int,
 	crimes_95					int,
-	crimes_96					int
+	crimes_96					int,
+	CONSTRAINT PK_district PRIMARY KEY (district_id)
 )
 
-IF OBJECT_ID ('silver.loan', 'U') is not null 
-	DROP TABLE silver.loan;
 Create table silver.loan(
 	loan_id						int,
 	account_id					int,
@@ -79,21 +96,19 @@ Create table silver.loan(
 	duration					int,
 	payments					int,
 	status						varchar(50)
+	CONSTRAINT PK_loan PRIMARY KEY (loan_id)
 )
 
-IF OBJECT_ID ('silver.orders', 'U') is not null 
-	DROP TABLE silver.orders;
 Create table silver.orders(
 	order_id					int, 
 	account_id					int, 
 	bank						varchar(50),
 	account						int, 
 	amount						int,
-	k_symbol					nvarchar(50)
+	k_symbol					nvarchar(50),
+	CONSTRAINT PK_orders PRIMARY KEY (order_id)
 )
 
-IF OBJECT_ID ('silver.trans', 'U') is not null 
-	DROP TABLE silver.trans;
 Create table silver.trans(
 	trans_id					int, 
 	account_id					int, 
@@ -104,5 +119,35 @@ Create table silver.trans(
 	balance						decimal(19,2), 
 	k_symbol					nvarchar(50),
 	bank						nvarchar(50),
-	account						int
+	account						int,
+	CONSTRAINT PK_trans PRIMARY KEY (trans_id)
 ) 
+
+-- ============================
+-- ADD FK for TABLE had PK
+-- ============================
+
+ALTER TABLE  silver.account 
+	ADD CONSTRAINT FK_account_district FOREIGN KEY (district_id) REFERENCES silver.district(district_id);
+
+ALTER TABLE silver.card 
+	ADD CONSTRAINT FK_card_disp FOREIGN KEY (disp_id) REFERENCES silver.disp(disp_id)
+
+ALTER TABLE silver.client 
+	ADD CONSTRAINT FK_client_district FOREIGN KEY (district_id) REFERENCES silver.district(district_id);
+
+ALTER TABLE silver.disp
+	ADD CONSTRAINT FK_disp_client	FOREIGN KEY (client_id) REFERENCES silver.client(client_id);
+
+ALTER TABLE silver.disp
+	ADD CONSTRAINT FK_disp_account	FOREIGN KEY (account_id) REFERENCES silver.account(account_id);
+
+ALTER TABLE silver.loan
+	ADD CONSTRAINT FK_loan_account	FOREIGN KEY (account_id) REFERENCES silver.account(account_id);
+
+ALTER TABLE silver.orders
+	ADD CONSTRAINT FK_orders_account	FOREIGN KEY (account_id) REFERENCES silver.account(account_id);
+
+ALTER TABLE silver.trans
+	ADD CONSTRAINT FK_trans_account	FOREIGN KEY (account_id) REFERENCES silver.account(account_id);
+
