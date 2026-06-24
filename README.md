@@ -1,4 +1,4 @@
-# CzechBankProject
+# czech-bank-analytics
 
 ## Giám đốc Khối Bán lẻ:
 Tăng trưởng tài khoản & số dư qua các năm thế nào?  <br>
