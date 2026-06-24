@@ -12,7 +12,7 @@ Script Purpose:
 */
 
 
-Create or Alter Procedure silver.load_silver AS
+--Create or Alter Procedure silver.load_silver AS
 Begin 
 	Declare @start_time Datetime, @end_time Datetime
 	Begin Try 
@@ -203,7 +203,7 @@ Begin
 			loan_id,
 			account_id,
 			convert(varchar(10),cast(date as date),101) as date ,
-			amount,
+			TRY_CAST(TRY_CAST(amount AS DECIMAL(18,2)) AS INT) AS amount,
 			duration,
 			TRY_CAST(TRY_CAST(payments AS DECIMAL(18,2)) AS INT) AS payments,
 			Case
