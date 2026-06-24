@@ -40,8 +40,7 @@ Create Table silver.account(
 	district_id					int,
 	frequency					nvarchar(50),
 	date						date,
-	CONSTRAINT PK_account PRIMARY KEY (account_id),
-
+	CONSTRAINT PK_account PRIMARY KEY (account_id)
 );
 
 Create table silver.card(
@@ -95,7 +94,7 @@ Create table silver.loan(
 	amount						int,
 	duration					int,
 	payments					int,
-	status						varchar(50)
+	status						varchar(50),
 	CONSTRAINT PK_loan PRIMARY KEY (loan_id)
 )
 
