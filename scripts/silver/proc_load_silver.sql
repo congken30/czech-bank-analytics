@@ -16,131 +16,27 @@ Script Purpose:
 Begin 
 	Declare @start_time Datetime, @end_time Datetime
 	Begin Try 
-		print '==========================================='
-		print 'Loading Silver Layer'
-		print '==========================================='
+		print '============================================='
+		print 'Deleting all Silver Layer (child -> parent)'
+		print '============================================='
+		DELETE FROM silver.card;
+		DELETE FROM silver.disp;
+		DELETE FROM silver.loan;
+		DELETE FROM silver.orders;
+		DELETE FROM silver.trans;
+		DELETE FROM silver.account;
+		DELETE FROM silver.client;
+		DELETE FROM silver.district;
+        PRINT '>> All tables deleted'
+		
+		print '============================================='
+		print 'Loading Silver Layer (parent -> child)'
+		print '============================================='
 
 		print '                                           '
 		print '-------------------------------------------'
 	
 		set @start_time = getdate();
-		print '>> Truncating table : silver.account'
-		Truncate table silver.account
-
-		print '>> Inserting table : silver.account'
-		Insert into silver.account(
-			account_id,
-			district_id,
-			frequency,
-			date
-		) 
-		Select 
-			account_id,
-			district_id, 
-			Case	
-				when frequency = '"POPLATEK MESICNE"' then 'monthly issuance'
-				when frequency = '"POPLATEK TYDNE"' then 'weekly issuance'
-				else 'issuance after transaction' 
-			End as Frequency,
-			convert(varchar(10),cast(date as date),101) as Date
-		From bronze.account
-		set @end_time = getdate();
-		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
-		print '-------------------------------------------'
-
-		print '                                           '
-		print '-------------------------------------------'
-
-		set @start_time = getdate();
-		print '>> Truncating table : silver.card'
-		Truncate table silver.card
-
-		print '>> Inserting table : silver.card'
-		Insert into silver.card(
-			card_id,
-			disp_id,
-			type,
-			issued
-		)
-		Select 
-			card_id,
-			disp_id,
-			replace(type,'"',''), 
-			convert(varchar(10),cast(issued as date),101) as Issued
-		From bronze.card
-		set @end_time = getdate();
-		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
-		print '-------------------------------------------'
-
-		print '                                           '
-		print '-------------------------------------------'
-
-		set @start_time = getdate();
-		print '>> Truncating table : silver.client'
-		Truncate table silver.client
-
-		print '>> Inserting table : silver.client'
-		Insert into silver.client(
-			client_id,
-			district_id,
-			birth_date,
-			gender
-		)
-		Select 
-			client_id,
-			district_id,
-			CASE
-				when SUBSTRING(replace(birth_number,'"',''),3,2) >12 
-					then RIGHT('0' + CAST(CAST(SUBSTRING(REPLACE(birth_number, '"', ''), 3, 2) AS INT) - 50 AS VARCHAR(2)), 2)
-						+ '/' + SUBSTRING(replace(birth_number,'"',''),5,2)
-						+ '/19' + SUBSTRING(replace(birth_number,'"',''),1,2)
-				else substring(replace(birth_number,'"',''),3,2) 
-						+ '/' + SUBSTRING(replace(birth_number,'"',''),5,2)
-						+ '/19' + SUBSTRING(replace(birth_number,'"',''),1,2)
-			End as birth_date,
-			Case 
-				when SUBSTRING(replace(birth_number,'"',''),3,2) >12  
-					then 'Female'
-				else 'Male'
-			End as gender
-		From bronze.client
-		set @end_time = getdate();
-		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
-		print '-------------------------------------------'
-
-		print '                                           '
-		print '-------------------------------------------'
-
-		set @start_time = getdate();
-		print '>> Truncating table : silver.disp'
-		Truncate table silver.disp
-
-		print '>> Inserting table : silver.disp'
-		INSERT INTO silver.disp(
-			disp_id,
-			client_id,
-			account_id,
-			type
-		)
-		Select 
-			disp_id,
-			client_id,
-			account_id,
-			Case when type ='"OWNER"' then 'Owner'
-				else 'Disponent' 
-			End as type
-		From bronze.disp
-		set @end_time = getdate();
-		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
-		print '-------------------------------------------'
-
-		print '                                           '
-		print '-------------------------------------------'
-
-		set @start_time = getdate();
-		print '>> Truncating table : silver.district'
-		Truncate table silver.district
-
 		print '>> Inserting table : silver.district'
 		Insert INTO silver.district(
 			district_id,
@@ -178,17 +74,102 @@ Begin
 			TRY_CAST(A12 as decimal(5,2))		as crimes_95,
 			A16									as crimes_96
 		From bronze.district
+		set @end_time = getdate()
+		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
+		print '-------------------------------------------'
+
+		set @start_time = getdate();
+		set @start_time = getdate()
+		print '>> Inserting table : silver.account'
+		Insert into silver.account(
+			account_id,
+			district_id,
+			frequency,
+			date
+		)
+		Select
+			account_id,
+			district_id,
+			Case
+				when frequency = '"POPLATEK MESICNE"' then 'monthly issuance'
+				when frequency = '"POPLATEK TYDNE"' then 'weekly issuance'
+				else 'issuance after transaction'
+			End as Frequency,
+			convert(varchar(10),cast(date as date),101) as Date
+		From bronze.account
 		set @end_time = getdate();
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
 		print '-------------------------------------------'
 
-		print '                                           '
+		set @start_time = getdate();
+		print '>> Inserting table : silver.client'
+		Insert into silver.client(
+			client_id,
+			district_id,
+			birth_date,
+			gender
+		)
+		Select 
+			client_id,
+			district_id,
+			CASE
+				when SUBSTRING(replace(birth_number,'"',''),3,2) >12 
+					then RIGHT('0' + CAST(CAST(SUBSTRING(REPLACE(birth_number, '"', ''), 3, 2) AS INT) - 50 AS VARCHAR(2)), 2)
+						+ '/' + SUBSTRING(replace(birth_number,'"',''),5,2)
+						+ '/19' + SUBSTRING(replace(birth_number,'"',''),1,2)
+				else substring(replace(birth_number,'"',''),3,2) 
+						+ '/' + SUBSTRING(replace(birth_number,'"',''),5,2)
+						+ '/19' + SUBSTRING(replace(birth_number,'"',''),1,2)
+			End as birth_date,
+			Case 
+				when SUBSTRING(replace(birth_number,'"',''),3,2) >12  
+					then 'Female'
+				else 'Male'
+			End as gender
+		From bronze.client
+		set @end_time = getdate();
+		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
 		print '-------------------------------------------'
 
 		set @start_time = getdate();
-		print '>> Truncating table : silver.loan'
-		Truncate table silver.loan
+		print '>> Inserting table : silver.disp'
+		INSERT INTO silver.disp(
+			disp_id,
+			client_id,
+			account_id,
+			type
+		)
+		Select 
+			disp_id,
+			client_id,
+			account_id,
+			Case when type ='"OWNER"' then 'Owner'
+				else 'Disponent' 
+			End as type
+		From bronze.disp
+		set @end_time = getdate();
+		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
+		print '-------------------------------------------'
 
+		set @start_time = getdate();
+		print '>> Inserting table : silver.card'
+		Insert into silver.card(
+			card_id,
+			disp_id,
+			type,
+			issued
+		)
+		Select
+			card_id,
+			disp_id,
+			replace(type,'"',''),
+			convert(varchar(10),cast(issued as date),101) as Issued
+		From bronze.card
+		set @end_time = getdate();
+		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
+		print '-------------------------------------------'
+
+		set @start_time = getdate();
 		print '>> Loading table : silver.loan'
 		INSERT INTO silver.loan (
 			loan_id,
@@ -217,13 +198,7 @@ Begin
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
 		print '-------------------------------------------'
 
-		print '                                           '
-		print '-------------------------------------------'
-
 		set @start_time = getdate();
-		print '>> Truncating table : silver.orders'
-		Truncate table silver.orders
-
 		print '>> Loading table : silver.orders'
 		INSERT INTO silver.orders( 
 			order_id,
@@ -250,13 +225,7 @@ Begin
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
 		print '-------------------------------------------'
 
-		print '                                           '
-		print '-------------------------------------------'
-
 		set @start_time = getdate();
-		print '>> Truncating table : silver.trans'
-		Truncate table silver.trans
-
 		print '>> Loading table : silver.trans'
 		INSERT INTO silver.trans(
 			trans_id,
@@ -313,8 +282,8 @@ Begin
 	BEGIN CATCH 
 		Print '==============================='
 		print 'ERROR OCCURED DURING LOADING SILVER LAYER'
-		PRINT 'Error Message' + ERROR_Message();
-		print 'Error Message' + CAST (ERROR_NUMBER() as nvarchar);
+		PRINT 'Error Message : ' + ERROR_Message();
+		print 'Error Message : ' + CAST (ERROR_NUMBER() as nvarchar);
 		print '==============================='
 	END CATCH 
 End
