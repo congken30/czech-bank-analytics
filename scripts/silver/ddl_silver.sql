@@ -86,8 +86,8 @@ IF OBJECT_ID ('silver.orders', 'U') is not null
 Create table silver.orders(
 	order_id					int, 
 	account_id					int, 
-	bank_to						varchar(50),
-	account_to					int, 
+	bank						varchar(50),
+	account						int, 
 	amount						decimal(19,2),
 	k_symbol					nvarchar(50)
 )
