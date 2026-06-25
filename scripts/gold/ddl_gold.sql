@@ -23,7 +23,7 @@ IF OBJECT_ID ('gold.dim_client','V') is not null
 IF OBJECT_ID ('gold.dim_district','V') is not null 
 	DROP VIEW gold.dim_district;
 IF OBJECT_ID ('gold.dim_disp','V') is not null 
-	DROP VIEW gold.dim_disp;
+	DROP VIEW gold.dim_disp; 
 IF OBJECT_ID ('gold.fact_trans','V') is not null 
 	DROP VIEW gold.fact_trans;
 IF OBJECT_ID ('gold.fact_loan','V') is not null 
