@@ -14,6 +14,8 @@ Usage:
 ===============================================================================
 */
 
+IF OBJECT_ID ('gold.dim_date','V') is not null 
+	DROP VIEW gold.dim_date;
 IF OBJECT_ID ('gold.dim_account','V') is not null 
 	DROP VIEW gold.dim_account;
 IF OBJECT_ID ('gold.dim_client','V') is not null 
@@ -33,20 +35,28 @@ GO
 -- =============================================================================
 CREATE VIEW gold.dim_account AS 
 SELECT 
-	a.account_id	as AccountID,
-	dp.disp_id		as DispositionID,
-	a.district_id	as DistrictID,
-	cd.card_id		as CardID,
-	dp.client_id	as ClientID,
-	a.frequency		as Frequency,
-	a.date			as Date,
-	dp.type			as DispositionType,
-	cd.type			as CardType
+	account_id	as AccountID,
+	district_id	as DistrictID,
+	frequency		as Frequency,
+	date			as Date
 FROM silver.account a
-LEFT JOIN silver.disp dp
-ON a.account_id = dp.account_id
-LEFT JOIN silver.card cd
-ON dp.disp_id = cd.disp_id
+GO
+
+-- =============================================================================
+-- Create Dimension: gold.dim_disp
+-- =============================================================================
+CREATE VIEW gold.dim_disp AS 
+SELECT 
+	dp.disp_id		as DispositionID,
+	dp.client_id	as ClientID,
+	dp.account_id	as AccountID,
+	dp.type			as DispositionType,
+	c.card_id		as CardID,
+	c.type			as CardType,
+	c.issued		as IssuedDate
+FROM silver.disp dp
+LEFT JOIN silver.card c
+ON dp.disp_id = c.disp_id
 GO
 
 -- =============================================================================
@@ -66,11 +76,18 @@ GO
 -- =============================================================================
 CREATE VIEW gold.dim_district AS 
 SELECT 
-	district_id		as DistrictID,
-	district_name	as DistrictName,
-	region			as Region,
-	population		as Population,
-	avg_salary		as AverageSalary
+    district_id                 AS DistrictID,
+    district_name               AS DistrictName,
+    region                      AS Region,
+    population                  AS Population,
+    num_cities                  AS NumCities,
+    urban_ratio                 AS UrbanRatio,
+    avg_salary                  AS AverageSalary,
+    unemployment_rate_95        AS UnemploymentRate95,
+    unemployment_rate_96        AS UnemploymentRate96,
+    entrepreneurs_per_1000      AS EntrepreneursPer1000,
+    crimes_95                   AS Crimes95,
+    crimes_96                   AS Crimes96
 FROM silver.district
 GO
 
@@ -81,26 +98,15 @@ CREATE VIEW gold.fact_trans AS
 SELECT 
 	tr.trans_id			as TransactionID,
 	tr.account_id		as AccountID,
-	ddt.DistrictName,
-	ddt.Region,
-	ddt.AverageSalary,
 	tr.date				as TransactionDate,
-	tr.type				as TypeOfTransaction,
+	tr.type				as TransactionType,
 	tr.operation		as Operation,
 	tr.amount			as Amount,
 	tr.balance			as Balance,
-	tr.k_symbol			as CharacterizationOfTransaction,
+	tr.k_symbol			as TransactionCategory,
 	tr.bank				as BankOfPartner,
-	tr.account			as AccountOfPartner,
-	da.Frequency,
-	da.DispositionType,
-	da.CardType,
-	da.Date
+	tr.account			as AccountOfPartner
 FROM silver.trans tr
-LEFT JOIN gold.dim_account da
-ON tr.account_id = da.AccountID
-LEFT JOIN gold.dim_district ddt
-ON da.DistrictID = ddt.DistrictID
 GO
 
 -- =============================================================================
@@ -114,19 +120,8 @@ SELECT
 	l.amount				as LoanAmount,
 	l.duration				as LoanDuration,
 	l.payments				as LoanPayments,
-	l.status				as LoanStatus,
-	ddt.DistrictName,
-	ddt.Region,
-	ddt.AverageSalary,
-	da.Frequency,
-	da.DispositionType,
-	da.CardType,
-	da.Date
+	l.status				as LoanStatus
 FROM silver.loan l
-LEFT JOIN gold.dim_account da
-ON l.account_id = da.AccountID
-LEFT JOIN gold.dim_district ddt
-ON da.DistrictID = ddt.DistrictID	
 GO
 
 -- =============================================================================
@@ -139,20 +134,28 @@ SELECT
 	o.bank				as BankOfRecipient,
 	o.account			as AccountOfRecipient,
 	o.amount			as AmountOfMoney,
-	o.k_symbol			as CharacterizationOfPayment,
-	ddt.DistrictName,
-	ddt.Region,
-	da.Frequency,
-	da.DispositionType,
-	da.CardType,
-	da.Date
+	o.k_symbol			as PaymentType
 FROM silver.orders o
-LEFT JOIN gold.dim_account da
-ON o.account_id = da.AccountID
-LEFT JOIN gold.dim_district ddt
-ON da.DistrictID = ddt.DistrictID
 GO
 
+-- =============================================================================
+-- Create Dimension Table : gold.dim_date
+-- =============================================================================
+CREATE VIEW gold.dim_date AS
+SELECT DISTINCT
+    CAST(date AS DATE)                          AS Date,
+    YEAR(date)                                  AS Year,
+    MONTH(date)                                 AS Month,
+    FORMAT(date, 'yyyy-MM')                     AS YearMonth,
+    DATENAME(MONTH, date)                       AS MonthName,
+    DATEPART(QUARTER, date)                     AS Quarter
+FROM (
+    SELECT date FROM silver.trans
+    UNION
+    SELECT date FROM silver.account
+    UNION
+    SELECT date FROM silver.loan
+) AS all_dates
 
 
 
