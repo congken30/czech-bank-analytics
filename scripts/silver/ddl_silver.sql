@@ -123,7 +123,7 @@ Create table silver.trans(
 ) 
 
 -- ============================
--- ADD FK for TABLE had PK
+-- ADD FK 
 -- ============================
 
 ALTER TABLE  silver.account 
@@ -149,4 +149,3 @@ ALTER TABLE silver.orders
 
 ALTER TABLE silver.trans
 	ADD CONSTRAINT FK_trans_account	FOREIGN KEY (account_id) REFERENCES silver.account(account_id);
-
