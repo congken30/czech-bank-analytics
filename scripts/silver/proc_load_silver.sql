@@ -12,7 +12,7 @@ Script Purpose:
 */
 
 
---Create or Alter Procedure silver.load_silver AS
+Create or Alter Procedure silver.load_silver AS
 Begin 
 	Declare @start_time Datetime, @end_time Datetime
 	Begin Try 
@@ -95,7 +95,7 @@ Begin
 				when frequency = '"POPLATEK TYDNE"' then 'weekly issuance'
 				else 'issuance after transaction'
 			End as Frequency,
-			convert(varchar(10),cast(date as date),101) as Date
+			date
 		From bronze.account
 		set @end_time = getdate();
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
@@ -163,7 +163,7 @@ Begin
 			card_id,
 			disp_id,
 			replace(type,'"',''),
-			convert(varchar(10),cast(issued as date),101) as Issued
+			issued
 		From bronze.card
 		set @end_time = getdate();
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
@@ -183,7 +183,7 @@ Begin
 		Select 
 			loan_id,
 			account_id,
-			convert(varchar(10),cast(date as date),101) as date ,
+			date ,
 			TRY_CAST(TRY_CAST(amount AS DECIMAL(18,2)) AS INT) AS amount,
 			duration,
 			TRY_CAST(TRY_CAST(payments AS DECIMAL(18,2)) AS INT) AS payments,
@@ -218,7 +218,8 @@ Begin
 				When k_symbol = '"POJISTNE"' Then 'inssurrance payment'
 				When k_symbol = '"SIPO"'	Then 'household'
 				When k_symbol = '"LEASING"' Then 'leasing'
-				Else 'loan payment'
+				When k_symbol = '"UVER"' Then 'loan payment'
+				Else 'n/a'
 			END
 		From bronze.orders
 		set @end_time = getdate();
@@ -242,7 +243,7 @@ Begin
 		Select 
 			trans_id,
 			account_id,
-			convert(varchar(10),cast(date as date), 101) as date,
+			date,
 			Case 
 				When type = '"PRIJEM"' Then 'credit'
 				Else 'withdrawal'
@@ -270,7 +271,7 @@ Begin
 			Case 
 				WHEN bank = '""' then 'unknown'
 				WHEN bank is null then 'unknown'
-				ELSE bank
+				ELSE replace(bank,'"','')
 			END as bank,
 			replace(account,'"','') as account
 		From bronze.trans
