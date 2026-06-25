@@ -71,7 +71,7 @@ Begin
 			TRY_CAST(A12 as decimal(5,2)) 		as unemployment_rate_95,
 			A13									as unemployment_rate_96,
 			A14									as entrepreneurs_per_1000,
-			TRY_CAST(A15 as decimal(5,2))		as crimes_95,
+			TRY_CAST(A15 as int)				as crimes_95,
 			A16									as crimes_96
 		From bronze.district
 		set @end_time = getdate()
