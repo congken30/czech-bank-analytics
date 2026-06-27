@@ -12,7 +12,7 @@ Instead of exploring data aimlessly, this project starts from stakeholder requir
 
 PersonaFocus AreaRetail Banking DirectorRegional portfolio overview, account growth, product penetrationCredit Risk DirectorLoan default patterns, risk segmentation by district and demographicsMarketing DirectorCustomer segmentation, cross-sell opportunities, campaign targeting
 
-These personas generate 12 business questions documented in [Xem tài liệu hướng dẫn](docs/stakeholder-requirements.md)
+These personas generate 12 business questions documented in [Xem tài liệu hướng dẫn]([docs/stakeholder-requirements.md](https://github.com/congken30/czech-bank-analytics/blob/main/docs/stakeholder_requirements.md))
 , which serve as the project's analytical roadmap.
 
 ## Data Architecture
