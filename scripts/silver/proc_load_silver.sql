@@ -215,7 +215,7 @@ Begin
 			replace(account_to,'"','')							as account,
 			try_cast(try_cast(amount as decimal(10,2)) as int)	as amount,
 			Case 
-				When k_symbol = '"POJISTNE"' Then 'inssurrance payment'
+				When k_symbol = '"POJISTNE"' Then 'insurrance payment'
 				When k_symbol = '"SIPO"'	Then 'household'
 				When k_symbol = '"LEASING"' Then 'leasing'
 				When k_symbol = '"UVER"' Then 'loan payment'
@@ -265,7 +265,7 @@ Begin
 				When '"UVER"'			Then 'loan payment'
 				When '"SANKC. UROK"'	Then 'penalty Interest'
 				When '"SIPO"'			Then 'household'
-				When '"POJISTNE"'		Then 'insurrance payment'
+				When '"POJISTNE"'		Then 'insurance payment'
 				ELSE 'n/a'
 			END as k_symbol,
 			Case 
