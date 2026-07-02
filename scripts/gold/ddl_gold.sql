@@ -14,8 +14,6 @@ Usage:
 ===============================================================================
 */
 
-IF OBJECT_ID ('gold.dim_date','V') is not null 
-	DROP VIEW gold.dim_date;
 IF OBJECT_ID ('gold.dim_account','V') is not null 
 	DROP VIEW gold.dim_account;
 IF OBJECT_ID ('gold.dim_client','V') is not null 
@@ -143,21 +141,23 @@ GO
 -- =============================================================================
 -- Create Dimension Table : gold.dim_date
 -- =============================================================================
-CREATE VIEW gold.dim_date AS
-SELECT DISTINCT
-    CAST(date AS DATE)                          AS Date,
-    YEAR(date)                                  AS Year,
-    MONTH(date)                                 AS Month,
-    FORMAT(date, 'yyyy-MM')                     AS YearMonth,
-    DATENAME(MONTH, date)                       AS MonthName,
-    DATEPART(QUARTER, date)                     AS Quarter
-FROM (
-    SELECT date FROM silver.trans
-    UNION
-    SELECT date FROM silver.account
-    UNION
-    SELECT date FROM silver.loan
-) AS all_dates
+DROP TABLE IF EXISTS gold.dim_date;
+
+WITH DateRange AS (
+    SELECT CAST('1993-01-01' AS DATE) AS [Date]
+    UNION ALL
+    SELECT DATEADD(DAY, 1, [Date])
+    FROM DateRange
+    WHERE [Date] < '1998-12-31'
+)
+SELECT
+    [Date],
+    YEAR([Date])  AS [Year],
+    MONTH([Date]) AS [Month],
+    DAY([Date])   AS [Day]
+INTO gold.dim_date
+FROM DateRange
+OPTION (MAXRECURSION 0)
 
 
 
