@@ -8,9 +8,9 @@ End-to-end banking analytics project: SQL Server medallion architecture (Bronze 
 <img width="45%" height="45%" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/d5d3949d-bedb-4b5f-82dc-1c5dd214003b" />
 
 ## Key Insights 
-- Czech Bank has 4500 Account, but Top-100 lifetime value accounts for ($612M) nearly 10% of total volumne ($6,361M).
-- Total Loan Account just have 15,6%, while 1997 the loan uptake rate is 4,36%; simultaneously number of new account also surged in 1997.
-- Just Top 50 High-Risk Borrowers accounted for ($10M) 12,5% of Total Loan Amount ($80M)
+- Czech Bank has 4500 Account, but Top-100 lifetime value accounts for ($612M) nearly 10% of total volume ($6,361M).
+- Only 15.6% of accounts hold a loan; loan uptake peaked at 4.36% in 1997, coinciding with the surge in new account openings.
+- Just Top 50 High-Risk Borrowers accounted for ($10M) 12.5% of Total Loan Amount ($80M)
 
 ## Data Model - Galaxy Schema 
 <img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/20008287-b28d-4f15-91b4-0a406525d62e" />.
@@ -26,17 +26,19 @@ Full requirement document with personas requests : [Full Requirement](docs/stake
 ## Repository Structure 
 ```
 czech-bank-analytics/
-├── [dashboard/](dashboard/)          # Exports of all 12 dashboard
+├── [dashboard/]
+│   ├── dashboard_image.md           # Exports of all 12 dashboard
+│   └── czech_bank_analytics.pbix    
 ├── [datasets/](datasets/)           # Berka source CSVs
 ├── docs/
 │   ├── [stakeholder_requirements.md](docs/stakeholder_requirements.md)   # 3 personas, 12 business questions
-│   └── Berka Data dictionary.pdf
+│   └── [Berka Data dictionary.pdf](docs/Berka Data dictionary.pdf)Berka Data dictionary.pdf
 ├── scripts/
 │   ├── [init_database.sql](scripts/init_database.sql)             # Create DB + bronze/silver/gold schemas
 │   ├── bronze/                       # DDL + BULK INSERT load procedure
 │   ├── silver/                       # DDL (PK/FK) + cleansing procedure
 │   └── gold/                         # Galaxy schema views + dim_date
-│   └── DAX-measure/                      # All 8 Table DAX measures
+│   └── DAX-measure/                  # All 8 Table DAX measures
  
 
 
