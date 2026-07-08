@@ -1,0 +1,450 @@
+table 'gold fact_trans'
+	lineageTag: 8d3cd9a0-a68e-4fa8-857e-5c1cf570e3a9
+
+	measure 'Avg Monthly Trans per Account' = ```
+			
+			AVERAGEX(
+			    VALUES('gold fact_trans'[AccountID]),
+			    VAR _Months = 
+			        CALCULATE(
+			            DATEDIFF(
+			                MIN('gold fact_trans'[TransactionDate]),
+			                MAX('gold fact_trans'[TransactionDate]),
+			                MONTH
+			            )
+			        ) + 1
+			    VAR _Trans = CALCULATE(COUNTROWS('gold fact_trans'))
+			    RETURN DIVIDE(_Trans, _Months)
+			)
+			```
+		formatString: 0.00
+		lineageTag: cf6dcc0c-54de-4f7e-b52c-35ecce5bccda
+
+	measure 'Average Account Balance' = ```
+			
+			AVERAGEX(
+			    VALUES('gold dim_account'[AccountID]),
+			    VAR LastDay = 
+			        CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			    VAR LastTransactionID = 
+			        CALCULATE(
+			            MAX('gold fact_trans'[TransactionID]),
+			            'gold fact_trans'[TransactionDate] = LastDay
+			        )
+			    VAR LastBalance = 
+			        CALCULATE(
+			            SUM('gold fact_trans'[Balance]), 
+			            'gold fact_trans'[TransactionID] = LastTransactionID
+			        )
+			    RETURN LastBalance
+			)
+			```
+		lineageTag: ae6d8cd8-9de9-40f7-bf29-59bafaf60cad
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Inactive Account' = ```
+			
+			    CALCULATE(
+			        DISTINCTCOUNT('gold fact_trans'[AccountID]),
+			        'gold fact_trans'[LastTranDay] > 90 )
+			```
+		formatString: 0
+		lineageTag: 79834beb-a7ff-43ad-8639-4ca488526dd8
+
+	measure 'Drop Balance' = ```
+			
+			    VAR LastDay = 
+			        CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			    VAR LastTransactionID = 
+			        CALCULATE(
+			            MAX('gold fact_trans'[TransactionID]),
+			            'gold fact_trans'[TransactionDate] = LastDay
+			        )
+			    VAR LastBalance = 
+			        CALCULATE(
+			            SUM('gold fact_trans'[Balance]), 
+			            'gold fact_trans'[TransactionID] = LastTransactionID
+			        )
+			    VAR SixMonthRollingAverage = 
+			        CALCULATE(
+			            AVERAGE('gold fact_trans'[Balance]),
+			            FILTER('gold fact_trans',DATEDIFF('gold fact_trans'[TransactionDate],date(1999,1,1),MONTH) < 7) 
+			        )
+			    RETURN LastBalance - 0.5*SixMonthRollingAverage 
+			```
+		lineageTag: 11670926-29e2-43ca-bbc2-26f30595941f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure '6 Month Average' = ```
+			CALCULATE(
+			            AVERAGE('gold fact_trans'[Balance]),
+			            FILTER('gold fact_trans',DATEDIFF('gold fact_trans'[TransactionDate],date(1999,1,1),MONTH) < 7) 
+			        )
+			```
+		lineageTag: 062dc880-ffcc-4cfb-b8c3-33cb3f69b76b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure CurrentBalance = ```
+			
+			CALCULATE(   
+			    VAR LastDay = 
+			        CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			    VAR LastTransactionID = 
+			        CALCULATE(
+			            MAX('gold fact_trans'[TransactionID]),
+			            'gold fact_trans'[TransactionDate] = LastDay
+			        )
+			    VAR LastBalance = 
+			        CALCULATE(
+			            SUM('gold fact_trans'[Balance]), 
+			            'gold fact_trans'[TransactionID] = LastTransactionID
+			        )
+			    RETURN LastBalance,
+			    CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both))
+			```
+		lineageTag: ea5341db-a818-42b0-8b4a-540dad9e928f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure SixMonthRollingAverage = ```
+			
+			    CALCULATE(
+			        AVERAGE('gold fact_trans'[Balance]),
+			        FILTER('gold fact_trans',DATEDIFF('gold fact_trans'[TransactionDate],date(1999,1,1),MONTH) < 7) 
+			    )
+			```
+		lineageTag: df7790c5-c873-4547-ad62-3774bbfcf98b
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Drop Balance Ratio' = ```
+			
+			    VAR LastDay = 
+			        CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			    VAR LastTransactionID = 
+			        CALCULATE(
+			            MAX('gold fact_trans'[TransactionID]),
+			            'gold fact_trans'[TransactionDate] = LastDay
+			        )
+			    VAR LastBalance = 
+			        CALCULATE(
+			            SUM('gold fact_trans'[Balance]), 
+			            'gold fact_trans'[TransactionID] = LastTransactionID
+			        )
+			    VAR SixMonthRollingAverage = 
+			        CALCULATE(
+			            AVERAGE('gold fact_trans'[Balance]),
+			            FILTER('gold fact_trans',DATEDIFF('gold fact_trans'[TransactionDate],date(1999,1,1),MONTH) < 7) 
+			        )
+			    RETURN (SixMonthRollingAverage - LastBalance) / SixMonthRollingAverage
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 8a8c8754-fee1-40f4-9b13-70a81641dbbc
+
+	measure 'Monthly Average Transaction of Loan Account' = ```
+			
+			    AVERAGEX(
+			        VALUES('gold fact_loan'[AccountID]),
+			        VAR TotalTran = 
+			            CALCULATE( 
+			                DISTINCTCOUNT('gold fact_trans'[TransactionID]),
+			                CROSSFILTER('gold fact_loan'[AccountID],'gold dim_account'[AccountID],Both)
+			            )
+			        VAR TotalMonth = 
+			            CALCULATE(
+			            DATEDIFF(
+			                MIN('gold fact_trans'[TransactionDate]),
+			                MAX('gold fact_trans'[TransactionDate]),
+			                MONTH
+			            ),
+			            CROSSFILTER('gold fact_loan'[AccountID],'gold dim_account'[AccountID],Both)
+			        ) + 1
+			        RETURN DIVIDE( TotalTran,TotalMonth)
+			    )
+			```
+		lineageTag: 31d32f92-7a78-4a59-8304-f93b93ea916d
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Potential Default Account' =
+			
+			CALCULATE(
+			VAR LastDatee = CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			VAR M1 = EDATE(LastDatee, 0)
+			VAR M2 = EDATE(LastDatee, -1)
+			VAR M3 = EDATE(LastDatee, -2)
+			
+			VAR Bal1 = CALCULATE(MAX('gold fact_trans'[Balance]),
+			    YEAR('gold fact_trans'[TransactionDate]) = YEAR(M1),
+			    MONTH('gold fact_trans'[TransactionDate]) = MONTH(M1))
+			
+			VAR Bal2 = CALCULATE(MAX('gold fact_trans'[Balance]),
+			    YEAR('gold fact_trans'[TransactionDate]) = YEAR(M2),
+			    MONTH('gold fact_trans'[TransactionDate]) = MONTH(M2))
+			
+			VAR Bal3 = CALCULATE(MAX('gold fact_trans'[Balance]),
+			    YEAR('gold fact_trans'[TransactionDate]) = YEAR(M3),
+			    MONTH('gold fact_trans'[TransactionDate]) = MONTH(M3))
+			
+			VAR Declining = Bal1 < Bal2 && Bal2 < Bal3
+			
+			// WR logic
+			VAR WRTable = ADDCOLUMNS(
+			    VALUES('gold fact_trans'[TransactionMonth]),
+			    "@WR", DIVIDE(
+			        CALCULATE(COUNTROWS('gold fact_trans'),
+			            'gold fact_trans'[TransactionType] = "withdrawal"),
+			        CALCULATE(COUNTROWS('gold fact_trans'))))
+			
+			VAR MeanWR = AVERAGEX(WRTable, [@WR])
+			VAR StdWR = STDEVX.P(WRTable, [@WR])
+			
+			VAR LastWR = CALCULATE(
+			    DIVIDE(
+			        CALCULATE(COUNTROWS('gold fact_trans'),
+			            'gold fact_trans'[TransactionType] = "withdrawal"),
+			        COUNTROWS('gold fact_trans'), 0),
+			    YEAR('gold fact_trans'[TransactionDate]) = YEAR(M1),
+			    MONTH('gold fact_trans'[TransactionDate]) = MONTH(M1))
+			
+			VAR Spike = LastWR > MeanWR + 2 * StdWR
+			
+			RETURN IF(Declining || Spike, 1, 0)
+			,
+			CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both)
+			)
+		formatString: 0
+		lineageTag: d8177241-7205-4478-894c-8c408e71b9b8
+
+	measure 'Total At-Risk Borrowers' = ```
+			
+			CALCULATE( 
+			    COUNT('gold fact_loan'[AccountID]),
+			        FILTER(
+			            VALUES('gold fact_loan'[AccountID]),
+			            [Potential Default Account] = 1
+			        ),
+			    'gold fact_loan'[LoanStatus] IN {"running, in debt","running, Ok so far"},
+			    CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both)
+			)
+			```
+		formatString: 0
+		lineageTag: b7cb33bf-e279-4942-a0a6-e9cc5753a01a
+
+	measure 'At-Risk Balance' = ```
+			
+			CALCULATE( 
+			    SUM('gold fact_loan'[LoanAmount]),
+			    FILTER(
+			    VALUES('gold fact_loan'[AccountID]),
+			    [Potential Default Account] = 1
+			    ),
+			    'gold fact_loan'[LoanStatus] In {"running, in debt","running, Ok so far"},
+			    CROSSFILTER('gold dim_account'[AccountID], 'gold fact_loan'[AccountID],Both)
+			)
+			```
+		formatString: 0
+		lineageTag: ecbf3b92-ea6d-42e1-be8a-93d364b455a0
+
+	measure 'Current Withdrawal Ratio' = ```
+			
+			CALCULATE( 
+			    VAR LastDatee = CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			    VAR M1 = EDATE(LastDatee, 0)
+			    VAR LastWR = 
+			    CALCULATE(
+			        DIVIDE(
+			            CALCULATE(COUNTROWS('gold fact_trans'),
+			                'gold fact_trans'[TransactionType] = "withdrawal"),
+			                COUNTROWS('gold fact_trans'), 0),
+			            YEAR('gold fact_trans'[TransactionDate]) = YEAR(M1),
+			            MONTH('gold fact_trans'[TransactionDate]) = MONTH(M1))
+			    RETURN LastWR,
+			    CROSSFILTER( 'gold dim_account'[AccountID], 'gold fact_loan'[AccountID],Both))
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 851c23d2-a059-4104-9b66-320184bff6c9
+
+	measure 'Inactive Account Ratio' =
+			
+			DIVIDE('gold fact_trans'[Inactive Account],MAX('gold dim_account'[AccountID]))
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: b7d4bf40-df32-4d02-a150-6ab3dfec5635
+
+	measure 'Total Outflow Volume' = ```
+			'gold fact_trans'[6 Month Average] - 'gold fact_trans'[CurrentBalance]
+			    
+			```
+		formatString: \$#,0;(\$#,0);\$#,0
+		lineageTag: 150a1599-cafb-4591-9dc7-54ebea28c0cf
+
+	measure 'Total High-Risk Customer' = ```
+			
+			VAR MaxDate = MAX('gold fact_trans'[TransactionDate])
+			VAR CustomerRiskTable = 
+			    FILTER(
+			        VALUES('gold fact_trans'[AccountID]), 
+			        VAR CustomerLastDay = 
+			            CALCULATE(MAX('gold fact_trans'[TransactionDate]))
+			        VAR CustomerLastTxID = 
+			            CALCULATE(
+			                MAX('gold fact_trans'[TransactionID]), 
+			                'gold fact_trans'[TransactionDate] = CustomerLastDay
+			            )
+			        VAR CustomerLastBalance = 
+			            CALCULATE(
+			                MAX('gold fact_trans'[Balance]), 
+			                'gold fact_trans'[TransactionID] = CustomerLastTxID
+			            )
+			        VAR Customer6MAvg = 
+			            CALCULATE(
+			                AVERAGE('gold fact_trans'[Balance]),
+			                DATESINPERIOD(
+			                    'gold fact_trans'[TransactionDate], 
+			                    MaxDate, 
+			                    -6, 
+			                    MONTH
+			                )
+			            )  
+			        RETURN 
+			            NOT ISBLANK(CustomerLastBalance) && 
+			            CustomerLastBalance < (0.5 * Customer6MAvg)
+			    )
+			RETURN
+			    COUNTROWS(CustomerRiskTable)
+			```
+		formatString: 0
+		lineageTag: f71773ae-5f08-48ec-9922-91381ea6de95
+
+	column TransactionID
+		dataType: int64
+		formatString: 0
+		lineageTag: b4a7c3fa-1b02-44d3-a44b-d9efda7cc488
+		summarizeBy: count
+		sourceColumn: TransactionID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: 39d9de54-016b-4b14-8baf-3f2b94343b1f
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionDate
+		dataType: dateTime
+		formatString: mm/dd/yyyy
+		lineageTag: b9c1f1c0-339d-46f1-8993-c4444f03a8c4
+		summarizeBy: none
+		sourceColumn: TransactionDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+		annotation PBI_FormatHint = {"isDateTimeCustom":true}
+
+	column TransactionType
+		dataType: string
+		lineageTag: 23313fe5-7797-4e9d-934d-f42935ca1562
+		summarizeBy: none
+		sourceColumn: TransactionType
+
+		annotation SummarizationSetBy = Automatic
+
+	column Operation
+		dataType: string
+		lineageTag: 1323e77c-ddc3-4944-ad98-979a7a844e8d
+		summarizeBy: none
+		sourceColumn: Operation
+
+		annotation SummarizationSetBy = Automatic
+
+	column Amount
+		dataType: double
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 27e20cb1-1cb1-4c2b-aead-2d24eb70a285
+		summarizeBy: sum
+		sourceColumn: Amount
+
+		annotation SummarizationSetBy = Automatic
+
+	column Balance
+		dataType: double
+		formatString: 0.00
+		lineageTag: bc98adb5-de8c-49d8-abf7-c198ea56deb0
+		summarizeBy: sum
+		sourceColumn: Balance
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionCategory
+		dataType: string
+		lineageTag: 48d65da4-5e1f-4469-a4e2-404d0c78797f
+		summarizeBy: none
+		sourceColumn: TransactionCategory
+
+		annotation SummarizationSetBy = Automatic
+
+	column BankOfPartner
+		dataType: string
+		lineageTag: 5cc73207-daf5-415e-b9a6-114babb920e8
+		summarizeBy: none
+		sourceColumn: BankOfPartner
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountOfPartner
+		dataType: int64
+		formatString: 0
+		lineageTag: 59660214-bf38-4d74-940e-ac8bdabc2424
+		summarizeBy: sum
+		sourceColumn: AccountOfPartner
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastTransactionDate =
+			
+			CALCULATE(
+			    MAX('gold fact_trans'[TransactionDate]),
+			    ALLEXCEPT('gold fact_trans','gold fact_trans'[AccountID])
+			)
+		formatString: Short Date
+		lineageTag: 3df7307b-af4b-44c5-8c38-35c07ae702c6
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column LastTranDay = DATEDIFF('gold fact_trans'[LastTransactionDate],DATE(1999,1,1),DAY)
+		formatString: 0
+		lineageTag: 7847d23c-164f-45fa-94a3-99942eb1e907
+		summarizeBy: sum
+
+		annotation SummarizationSetBy = Automatic
+
+	column TransactionMonth = FORMAT('gold fact_trans'[TransactionDate], "YYYY-MM")
+		lineageTag: 3915615b-3ba3-4046-99bd-c43007945a97
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold fact_trans' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_fact_trans = Source{[Schema="gold",Item="fact_trans"]}[Data],
+				    #"Sorted Rows" = Table.Sort(gold_fact_trans,{{"TransactionID", Order.Ascending}, {"TransactionDate", Order.Ascending}})
+				in
+				    #"Sorted Rows"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

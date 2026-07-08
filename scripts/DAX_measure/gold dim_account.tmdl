@@ -1,0 +1,200 @@
+table 'gold dim_account'
+	lineageTag: e5020267-9755-4df5-b2a3-4e637fc68836
+
+	measure 'Total Account' = ```
+			
+			    CALCULATE(
+			        DISTINCTCOUNT('gold dim_account'[AccountID]),
+			        'gold dim_disp'[DispositionType] = "Owner",
+			        CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both),
+			        CROSSFILTER('gold fact_loan'[LoanDate],'gold dim_date'[Date],Both)
+			        )
+			```
+		formatString: 0
+		lineageTag: dfc4f553-7933-4b4a-a758-14b3546c7c6c
+
+	measure 'Avearage Balance' = CALCULATE(AVERAGE('gold fact_trans'[Balance]))
+		lineageTag: b034b8b6-22e3-464c-9f90-904ad6726cbf
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Gold Card Upgrade' = ```
+			
+			VAR CurrentCard = 
+			    CALCULATE(
+			        MAX('gold dim_disp'[CardType]),
+			        'gold dim_disp'[DispositionType] = "Owner"
+			    )
+			VAR IsEligibleCard = 
+			    IF(CurrentCard IN {"Classic", "Junior","No Card"}, 1, 0)
+			VAR AvgBalancePerAccount = 
+			    CALCULATE(
+			        AVERAGE('gold fact_trans'[Balance])
+			    )
+			VAR SystemMedianBalance = 
+			    CALCULATE(
+			        MEDIAN('gold fact_trans'[Balance]),
+			        ALL('gold fact_trans')
+			    )
+			VAR AvgTransactionsPerMonth = 
+			    AVERAGEX(
+			        VALUES('gold fact_trans'[TransactionMonth]),
+			        CALCULATE(COUNT('gold fact_trans'[TransactionID]))
+			    )
+			VAR LoanStatus = 
+			    CALCULATE(
+			        MAX('gold fact_loan'[LoanStatus]),
+			        'gold dim_disp'[DispositionType] = "Owner"
+			    )
+			VAR IsGoodCredit = 
+			    IF(LoanStatus IN {"running, Ok so far", "finished, no problems", BLANK()}, 1, 0) 
+			
+			RETURN 
+			    IF(
+			        IsEligibleCard = 1 
+			        && AvgBalancePerAccount > SystemMedianBalance
+			        && AvgTransactionsPerMonth >= 10
+			        && IsGoodCredit = 1,
+			        1,
+			        0
+			    )
+			```
+		formatString: 0
+		lineageTag: 8a85de83-92f2-487b-a045-02e6c88ff54a
+
+	measure AvgTransactionsPerMonth = ```
+			
+			    AVERAGEX(
+			        VALUES('gold fact_trans'[TransactionMonth]),
+			        CALCULATE(COUNT('gold fact_trans'[TransactionID]))
+			    )
+			```
+		lineageTag: 20d14c52-e09d-4463-9a0b-3906840e9e82
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Loan Status' = ```
+			
+			    CALCULATE(
+			        IF(MAX('gold fact_loan'[LoanStatus]) in {"running, Ok so far","running, in debt"},"running","finished"))
+			```
+		lineageTag: cfbe5180-dc47-4a44-a2f9-bc28aa549b23
+
+	measure 'Loan Account Ratio' = ```
+			
+			    DIVIDE(
+			        CALCULATE(
+			        COUNT('gold fact_loan'[AccountID]),
+			        'gold dim_disp'[DispositionType] = "Owner",
+			        CROSSFILTER('gold dim_disp'[AccountID],'gold dim_account'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both)),
+			        CALCULATE(COUNT('gold dim_account'[AccountID]))
+			    )
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: eccffc05-6799-4104-8cdc-99ee88347952
+
+	measure 'LTV Proxy' = ```
+			
+			    SUMX(
+			        'gold dim_account',
+			        CALCULATE(
+			            SUM('gold fact_trans'[Amount]) + SUM('gold fact_loan'[LoanAmount]),
+			            CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],Both),
+			            'gold dim_disp'[DispositionType] = "Owner"))
+			```
+		lineageTag: 1ec4175d-fcbd-4e16-b6a9-e78120845e55
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Number of Products held' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('gold fact_trans'[TransactionCategory]),
+			    'gold dim_disp'[DispositionType] = "Owner",
+			    CROSSFILTER('gold dim_account'[AccountID], 'gold fact_trans'[AccountID], Both),
+			    CROSSFILTER('gold dim_account'[AccountID], 'gold dim_disp'[AccountID], Both)
+			)
+		formatString: 0
+		lineageTag: 4e357642-ea5e-4cca-992c-58a1d9d53f76
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: 17d15216-6050-44cc-9cf2-1dfa1480763d
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DistrictID
+		dataType: int64
+		formatString: 0
+		lineageTag: eaf6e896-0979-40eb-a96f-38a86cb9b46e
+		summarizeBy: none
+		sourceColumn: DistrictID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Frequency
+		dataType: string
+		lineageTag: a354058d-4e13-4bab-80a9-2a5c832bab30
+		summarizeBy: none
+		sourceColumn: Frequency
+
+		annotation SummarizationSetBy = Automatic
+
+	column Date
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 312d6856-7298-4dd7-ae73-6b1803531ec8
+		summarizeBy: none
+		sourceColumn: Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Customer Segmentation' = ```
+			
+			VAR AverageBalance = 
+			    CALCULATE(
+			        AVERAGE('gold fact_trans'[Balance]),
+			        ALL('gold dim_account')
+			    )
+			VAR AverageFrequency = 
+			    CALCULATE(
+			        DIVIDE(Count('gold fact_trans'[TransactionID]),COUNT('gold dim_account'[AccountID]),0),
+			        ALL('gold dim_account')
+			    )
+			VAR AverageBalancePerAccount = CALCULATE(AVERAGE('gold fact_trans'[Balance]))
+			Var AverageFrequencyPerAccount = CALCULATE(COUNT('gold fact_trans'[TransactionID]))
+			RETURN 
+			    SWITCH(
+			        TRUE(),
+			        AverageBalancePerAccount > AverageBalance && AverageFrequencyPerAccount > AverageFrequency, "VIP",
+			        AverageBalancePerAccount < AverageBalance && AverageFrequencyPerAccount > AverageFrequency, "Mass Active",
+			        AverageBalancePerAccount > AverageBalance && AverageFrequencyPerAccount < AverageFrequency, "Sleeping Affluent",
+			        "Dormant"
+			    )
+			    
+			```
+		lineageTag: 7617db34-b410-466a-ae24-65039c915f93
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold dim_account' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_dim_account = Source{[Schema="gold",Item="dim_account"]}[Data]
+				in
+				    gold_dim_account
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

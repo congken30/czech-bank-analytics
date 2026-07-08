@@ -1,0 +1,159 @@
+table 'gold dim_district'
+	lineageTag: ae06e38b-3fd5-419a-a615-5556f0fc24e8
+
+	measure 'Total Loan Exposure' = ```
+			
+			    CALCULATE(
+			        SUM('gold fact_loan'[LoanAmount]),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[DistrictID],'gold dim_district'[DistrictID],Both)
+			    )
+			    
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 94cf98b3-6a0a-489d-8325-d7875f151b28
+
+	measure 'Average Unemployment Rate' = ```
+			
+			    AVERAGEX(
+			        'gold dim_district',
+			        ('gold dim_district'[UnemploymentRate95] + 'gold dim_district'[UnemploymentRate96]))/2
+			```
+		lineageTag: 8323562a-a996-4ae4-854f-014a8953fea9
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column DistrictID
+		dataType: int64
+		formatString: 0
+		lineageTag: 9ac28c32-fb0e-4abd-a09b-bf0bd6ba390c
+		summarizeBy: none
+		sourceColumn: DistrictID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DistrictName
+		dataType: string
+		lineageTag: a47aa33c-8691-4fde-bbe5-463ea0780c3f
+		summarizeBy: none
+		sourceColumn: DistrictName
+
+		annotation SummarizationSetBy = Automatic
+
+	column Region
+		dataType: string
+		lineageTag: 91fca6d1-eeef-45aa-8bc7-700b05ae73f8
+		summarizeBy: none
+		sourceColumn: Region
+
+		annotation SummarizationSetBy = Automatic
+
+	column Population
+		dataType: int64
+		formatString: 0
+		lineageTag: f264b375-5086-4077-8da5-87834878bf1b
+		summarizeBy: none
+		sourceColumn: Population
+
+		annotation SummarizationSetBy = Automatic
+
+	column NumCities
+		dataType: int64
+		formatString: 0
+		lineageTag: 8034ad2d-f8ca-412f-9fd2-f624859a4be6
+		summarizeBy: none
+		sourceColumn: NumCities
+
+		annotation SummarizationSetBy = Automatic
+
+	column UrbanRatio
+		dataType: double
+		lineageTag: 98d3aa6d-ee12-4378-8a00-74d48d6ff837
+		summarizeBy: none
+		sourceColumn: UrbanRatio
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column AverageSalary
+		dataType: int64
+		formatString: 0
+		lineageTag: 2bf6b478-e4b7-46b0-93ff-b4dd3b0f85e1
+		summarizeBy: none
+		sourceColumn: AverageSalary
+
+		annotation SummarizationSetBy = Automatic
+
+	column UnemploymentRate95
+		dataType: double
+		lineageTag: 237d7d49-b94b-41d9-80fd-701b1870b123
+		summarizeBy: none
+		sourceColumn: UnemploymentRate95
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column UnemploymentRate96
+		dataType: double
+		lineageTag: 116b142d-7ce5-44e3-9b3d-a6f98f405c9e
+		summarizeBy: none
+		sourceColumn: UnemploymentRate96
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column EntrepreneursPer1000
+		dataType: int64
+		formatString: 0
+		lineageTag: 3d0c5061-4035-44cb-869d-d1ff246128fc
+		summarizeBy: none
+		sourceColumn: EntrepreneursPer1000
+
+		annotation SummarizationSetBy = Automatic
+
+	column Crimes95
+		dataType: int64
+		formatString: 0
+		lineageTag: 0b74ebaa-5ea2-4a89-98c2-18427ba4d8d7
+		summarizeBy: none
+		sourceColumn: Crimes95
+
+		annotation SummarizationSetBy = Automatic
+
+	column Crimes96
+		dataType: int64
+		formatString: 0
+		lineageTag: 9a93f721-3c9b-4ffd-a6bb-c2f074676a0d
+		summarizeBy: none
+		sourceColumn: Crimes96
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Total Loan Exposure Column' = ```
+			
+			    CALCULATE(
+			        SUM('gold fact_loan'[LoanAmount]),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[DistrictID],'gold dim_district'[DistrictID],Both)
+			    )
+			```
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: b3f9a4b9-87b6-44e6-9178-8e04cdf028ea
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold dim_district' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_dim_district = Source{[Schema="gold",Item="dim_district"]}[Data]
+				in
+				    gold_dim_district
+
+	annotation PBI_ResultType = Table
+

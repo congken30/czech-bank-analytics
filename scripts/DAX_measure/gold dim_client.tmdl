@@ -1,0 +1,85 @@
+table 'gold dim_client'
+	lineageTag: c952a4bf-d73b-4262-baa1-d5b5c96b40a4
+
+	column ClientID
+		dataType: int64
+		formatString: 0
+		lineageTag: 25e14882-985f-436a-9564-2e646b40a90f
+		summarizeBy: none
+		sourceColumn: ClientID
+
+		annotation SummarizationSetBy = Automatic
+
+	column BirthDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: 4c8409f6-97a9-4ba4-8914-a00b82df4d16
+		summarizeBy: none
+		sourceColumn: BirthDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column Gender
+		dataType: string
+		lineageTag: fcb0e259-2512-4010-916c-8a74d3dae006
+		summarizeBy: none
+		sourceColumn: Gender
+
+		annotation SummarizationSetBy = Automatic
+
+	column DistrictID
+		dataType: int64
+		formatString: 0
+		lineageTag: 445867bb-f08d-4b98-a712-fac39ed76e93
+		summarizeBy: count
+		sourceColumn: DistrictID
+
+		annotation SummarizationSetBy = Automatic
+
+	column Age
+		dataType: int64
+		formatString: 0
+		lineageTag: 04174d90-c213-4c67-a93a-46438ea785cd
+		summarizeBy: sum
+		sourceColumn: Age
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Age Category' = ```
+			
+			 SWITCH(
+			    TRUE(),
+			    'gold dim_client'[Age] <= 25, "18-25",
+			    'gold dim_client'[Age] <= 35, "26-35",
+			    'gold dim_client'[Age] <= 45, "36-45",
+			    'gold dim_client'[Age] <= 60, "45-60",
+			    "60+" 
+			 )
+			```
+		dataType: string
+		lineageTag: 9f3d0348-3bbb-40ec-a4a3-0cf4e95118fa
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold dim_client' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_dim_client = Source{[Schema="gold",Item="dim_client"]}[Data],
+				    #"Added Custom" = Table.AddColumn(gold_dim_client, "Custom", each 1999 - Date.Year([BirthDate])),
+				    #"Renamed Columns" = Table.RenameColumns(#"Added Custom",{{"Custom", "Age"}})
+				in
+				    #"Renamed Columns"
+
+	annotation PBI_NavigationStepName = Navigation
+
+	annotation PBI_ResultType = Table
+

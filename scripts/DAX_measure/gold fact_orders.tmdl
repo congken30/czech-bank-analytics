@@ -1,0 +1,89 @@
+table 'gold fact_orders'
+	lineageTag: 0b616d14-fa87-4404-9ef2-059ff3d52ef9
+
+	measure 'Standing Orders' = ```
+			
+			    VAR TotalAccountWithOrder = 
+			        CALCULATE(
+			            DISTINCTCOUNT('gold fact_orders'[AccountID]),
+			            'gold dim_disp'[DispositionType] = "OWNER",
+			            CROSSFILTER('gold fact_orders'[AccountID],'gold dim_account'[AccountID],Both),
+			            CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],Both)
+			        )
+			    VAR TotalAccount = 
+			        CALCULATE(
+			            DISTINCTCOUNT('gold dim_account'[AccountID]),
+			            ALL('gold dim_client'[Age Category]),
+			            'gold dim_disp'[DispositionType] = "OWNER",
+			            CROSSFILTER('gold fact_orders'[AccountID],'gold dim_account'[AccountID],Both),
+			            CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],Both)
+			        )
+			    RETURN 
+			        DIVIDE(TotalAccountWithOrder,TotalAccount)
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 441e654a-d97c-479a-9d09-b3076eebc91f
+
+	column OrderID
+		dataType: int64
+		formatString: 0
+		lineageTag: 27ef9521-b63e-47cd-bb12-96aa055df8fb
+		summarizeBy: count
+		sourceColumn: OrderID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: a9af58b8-241c-4be9-af7b-b63df5bd3381
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column BankOfRecipient
+		dataType: string
+		lineageTag: 680be309-d746-4285-b406-32e3ecfea3a0
+		summarizeBy: none
+		sourceColumn: BankOfRecipient
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountOfRecipient
+		dataType: int64
+		formatString: 0
+		lineageTag: bff31949-550c-480d-ada4-ba9cee67064f
+		summarizeBy: sum
+		sourceColumn: AccountOfRecipient
+
+		annotation SummarizationSetBy = Automatic
+
+	column AmountOfMoney
+		dataType: int64
+		formatString: 0
+		lineageTag: bba5eb32-5a84-475e-9fc2-3b68be170169
+		summarizeBy: sum
+		sourceColumn: AmountOfMoney
+
+		annotation SummarizationSetBy = Automatic
+
+	column PaymentType
+		dataType: string
+		lineageTag: 3a1a41b2-e886-458f-8518-4ecafda521b3
+		summarizeBy: none
+		sourceColumn: PaymentType
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold fact_orders' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_fact_orders = Source{[Schema="gold",Item="fact_orders"]}[Data]
+				in
+				    gold_fact_orders
+
+	annotation PBI_ResultType = Exception
+

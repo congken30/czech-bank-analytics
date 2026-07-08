@@ -1,0 +1,90 @@
+table 'gold dim_disp'
+	lineageTag: 41c31b1d-caae-4c36-99bb-9b271934f9d1
+
+	measure 'Holding Card' = ```
+			
+			    DIVIDE( DISTINCTCOUNTNOBLANK('gold dim_disp'[CardID]),
+			    CALCULATE(DISTINCTCOUNT('gold dim_account'[AccountID])
+			    ))
+			```
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 8b5a39dc-f3bf-401a-9f29-277a2a45f8ba
+
+	column DispositionID
+		dataType: int64
+		formatString: 0
+		lineageTag: 85107f38-767c-4bba-9c77-a19266ed4ed8
+		summarizeBy: count
+		sourceColumn: DispositionID
+
+		annotation SummarizationSetBy = Automatic
+
+	column ClientID
+		dataType: int64
+		formatString: 0
+		lineageTag: 69ad58b5-0396-4104-a31c-19c372d75a22
+		summarizeBy: none
+		sourceColumn: ClientID
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: 1849abb2-ba96-45a8-a401-ef1daed754d2
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column DispositionType
+		dataType: string
+		lineageTag: 443e2299-36e7-4554-a909-774d08733b55
+		summarizeBy: none
+		sourceColumn: DispositionType
+
+		annotation SummarizationSetBy = Automatic
+
+	column CardID
+		dataType: int64
+		formatString: 0
+		lineageTag: 7389b56a-dd96-4a03-a36e-c8cd30933a81
+		summarizeBy: count
+		sourceColumn: CardID
+
+		annotation SummarizationSetBy = Automatic
+
+	column CardType
+		dataType: string
+		lineageTag: 14b0bc55-730c-4b55-aaa5-2be5f2e343de
+		summarizeBy: none
+		sourceColumn: CardType
+
+		annotation SummarizationSetBy = Automatic
+
+	column IssuedDate
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: e9bc2d56-e9cf-4d65-86a3-7160ec296e36
+		summarizeBy: none
+		sourceColumn: IssuedDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	partition 'gold dim_disp' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_dim_disp = Source{[Schema="gold",Item="dim_disp"]}[Data],
+				    #"Replaced Value" = Table.ReplaceValue(gold_dim_disp,null,"no card",Replacer.ReplaceValue,{"CardType"}),
+				    #"Capitalized Each Word" = Table.TransformColumns(#"Replaced Value",{{"CardType", Text.Proper, type text}})
+				in
+				    #"Capitalized Each Word"
+
+	annotation PBI_ResultType = Table
+
+	annotation PBI_NavigationStepName = Navigation
+

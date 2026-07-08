@@ -1,0 +1,218 @@
+table 'gold fact_loan'
+	lineageTag: c48309cb-ec8f-496c-bb8f-e72a7b7feb3a
+
+	measure 'Running Loan' =
+			
+			VAR RunningLoan =
+			    CALCULATE(
+			        COUNTROWS('gold fact_loan'),
+			        CONTAINSSTRING('gold fact_loan'[LoanStatus],"running"),
+			        'gold dim_disp'[DispositionType] = "OWNER",
+			        CROSSFILTER('gold fact_loan'[AccountID],'gold dim_account'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],both)
+			    )
+			VAR TotalLoans =
+			    CALCULATE(
+			        COUNTROWS('gold fact_loan'),
+			        'gold dim_disp'[DispositionType] = "OWNER",
+			        ALL('gold dim_client'[Age Category]),
+			        CROSSFILTER('gold fact_loan'[AccountID],'gold dim_account'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],both)
+			    )
+			RETURN
+			    DIVIDE(RunningLoan, TotalLoans)
+		formatString: 0.00%;-0.00%;0.00%
+		lineageTag: 197be089-d981-4424-bbe8-d5cdb3c7e36f
+
+	measure NPL_Ratio =
+			
+			DIVIDE(
+			    CALCULATE(
+			        COUNTROWS('gold fact_loan'),
+			        'gold fact_loan'[LoanStatus] IN {"finished, loan not payed", "running, in debt"},
+			        CROSSFILTER('gold fact_loan'[AccountID], 'gold dim_account'[AccountID], Both),
+			        CROSSFILTER('gold dim_account'[DistrictID],'gold dim_district'[DistrictID],Both)
+			    ),
+			    CALCULATE(
+			        COUNTROWS('gold fact_loan'),
+			        CROSSFILTER('gold fact_loan'[AccountID], 'gold dim_account'[AccountID], Both),
+			        CROSSFILTER('gold dim_account'[DistrictID],'gold dim_district'[DistrictID],Both)
+			        )
+			)
+		formatString: 0%;-0%;0%
+		lineageTag: 456ce329-b6a6-4076-adff-b30296f8d901
+
+	measure 'Loan Account Holding Card' = ```
+			
+			    CALCULATE(
+			        DISTINCTCOUNTNOBLANK('gold dim_disp'[CardID]),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold dim_disp'[AccountID],Both)
+			    )
+			```
+		formatString: 0
+		lineageTag: 043f75d1-d97f-4305-932d-93334cd14bb4
+
+	measure 'Loan Account Standing Orders' = ```
+			
+			    CALCULATE(
+			        DISTINCTCOUNT('gold fact_orders'[AccountID]),
+			        CROSSFILTER('gold fact_orders'[AccountID],'gold dim_account'[AccountID],Both),
+			        CROSSFILTER('gold dim_account'[AccountID],'gold fact_loan'[AccountID],Both))
+			```
+		formatString: 0
+		lineageTag: 8b08bfa5-20fb-4a04-ba6c-4aaf9678c63a
+
+	measure 'Average Salary of Loan Account' = ```
+			
+			    AVERAGEX(
+			        VALUES('gold fact_loan'[AccountID]),
+			        CALCULATE(
+			            MIN('gold dim_district'[AverageSalary]),
+			            CROSSFILTER('gold fact_loan'[AccountID],'gold dim_account'[AccountID],Both),
+			            CROSSFILTER('gold dim_district'[DistrictID],'gold dim_account'[DistrictID],Both)
+			        )
+			    )
+			```
+		lineageTag: e82aa517-abba-4950-93d9-4aebb1f1909a
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Average Account Balance Before Disbursement' =
+			
+			AVERAGEX(
+			    VALUES('gold fact_loan'[AccountID]),
+			    VAR _LoanDate = CALCULATE(MIN('gold fact_loan'[LoanDate]))
+			    VAR _StartDate = CALCULATE(MIN('gold fact_loan'[3 Month Before Disbursement]))
+			    RETURN
+			        CALCULATE(
+			            AVERAGE('gold fact_trans'[Balance]),
+			                'gold fact_trans'[TransactionDate] >= _StartDate,
+			                'gold fact_trans'[TransactionDate] < _LoanDate,
+			                CROSSFILTER('gold fact_loan'[AccountID], 'gold dim_account'[AccountID], Both)
+			        )
+			)
+		lineageTag: 5f0740b8-385a-431a-a431-76ed9e4b04a5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column LoanId
+		dataType: int64
+		formatString: 0
+		lineageTag: 16a1b25e-5546-4770-8ca9-486532ef5f58
+		summarizeBy: count
+		sourceColumn: LoanId
+
+		annotation SummarizationSetBy = Automatic
+
+	column AccountID
+		dataType: int64
+		formatString: 0
+		lineageTag: ab5dba87-275b-4418-ae7b-eda95a756a6a
+		summarizeBy: none
+		sourceColumn: AccountID
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoanDate
+		dataType: dateTime
+		formatString: Short Date
+		lineageTag: 3f21dd4d-f64d-463f-b515-84685c994359
+		summarizeBy: none
+		sourceColumn: LoanDate
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column LoanAmount
+		dataType: int64
+		formatString: \$#,0.###############;(\$#,0.###############);\$#,0.###############
+		lineageTag: 99b6a517-09f2-4dcc-82a2-c5530bddd7fd
+		summarizeBy: sum
+		sourceColumn: LoanAmount
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoanDuration
+		dataType: int64
+		formatString: 0
+		lineageTag: 770631fc-a0e5-4a90-8bd6-b0c5120ba23b
+		summarizeBy: sum
+		sourceColumn: LoanDuration
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoanPayments
+		dataType: int64
+		formatString: 0
+		lineageTag: 142c6424-0ef9-471b-9871-e6d544dee5d8
+		summarizeBy: sum
+		sourceColumn: LoanPayments
+
+		annotation SummarizationSetBy = Automatic
+
+	column LoanStatus
+		dataType: string
+		lineageTag: 39a0a0a4-ca76-4f6c-8b73-e7c861f8c285
+		summarizeBy: none
+		sourceColumn: LoanStatus
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Year Loan' = ```
+			
+			 SWITCH(
+			    TRUE(),
+			    'gold fact_loan'[LoanDuration] = 12, "1 Year",
+			    'gold fact_loan'[LoanDuration] = 24, "2 Years",
+			    'gold fact_loan'[LoanDuration] = 36, "3 Years",
+			    'gold fact_loan'[LoanDuration] = 48, "4 Years",
+			    "5 Years" 
+			 )
+			```
+		lineageTag: 30230f44-9a0b-4975-a0da-e1f7f346f0df
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column DetailedLoanStatus = ```
+			
+			    SWITCH(
+			        TRUE(),
+			        CONTAINSSTRING('gold fact_loan'[LoanStatus],"running"), "Running",
+			        "Finished")
+			```
+		lineageTag: 9c7d4f47-3673-4229-9044-e3876c3cdc13
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Loan Analysis' = ```
+			
+			    IF(
+			        'gold fact_loan'[LoanStatus] IN {"finished, loan not payed","running, in debt"}, "NPL","PL")
+			```
+		lineageTag: f74b0ed7-c90a-4cdc-a114-40d4556ff0d4
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column '3 Month Before Disbursement' = EDATE('gold fact_loan'[LoanDate], -3)
+		formatString: Short Date
+		lineageTag: bb66e454-d202-4baa-9e6a-c53fa7de36c5
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'gold fact_loan' = m
+		mode: import
+		source =
+				let
+				    Source = Sql.Database("localhost\SQLEXPRESS01", "CzechBankDB"),
+				    gold_fact_loan = Source{[Schema="gold",Item="fact_loan"]}[Data]
+				in
+				    gold_fact_loan
+
+	annotation PBI_ResultType = Exception
+
