@@ -27,14 +27,14 @@ Full requirement document with personas requests : [Full Requirement](docs/stake
 ```
 czech-bank-analytics/
 ├── [dashboard/]
-│   ├── dashboard_image.md           # Exports of all 12 dashboard
-│   └── czech_bank_analytics.pbix    
-├── [datasets/](datasets/)           # Berka source CSVs
+│   ├── dashboard_image.md            # Exports of all 12 dashboard
+│   └── czech_bank_analytics.pbix     # Power BI file
+├── [datasets/](datasets/)            # Berka source CSVs
 ├── docs/
-│   ├── [stakeholder_requirements.md](docs/stakeholder_requirements.md)   # 3 personas, 12 business questions
-│   └── [Berka Data dictionary.pdf](docs/Berka Data dictionary.pdf)Berka Data dictionary.pdf
+│   ├── stakeholder_requirements.md   # 3 personas, 12 business questions
+│   └── Berka Data dictionary.pdf     # data dictionary
 ├── scripts/
-│   ├── [init_database.sql](scripts/init_database.sql)             # Create DB + bronze/silver/gold schemas
+│   ├── init_database.sql             # Create DB + bronze/silver/gold schemas
 │   ├── bronze/                       # DDL + BULK INSERT load procedure
 │   ├── silver/                       # DDL (PK/FK) + cleansing procedure
 │   └── gold/                         # Galaxy schema views + dim_date
