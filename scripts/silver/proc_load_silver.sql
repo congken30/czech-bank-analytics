@@ -78,7 +78,6 @@ Begin
 		print '>>Load Duration : ' + cast(datediff(second,@start_time, @end_time) as nvarchar) + 'seconds'
 		print '-------------------------------------------'
 
-		set @start_time = getdate();
 		set @start_time = getdate()
 		print '>> Inserting table : silver.account'
 		Insert into silver.account(
@@ -215,7 +214,7 @@ Begin
 			replace(account_to,'"','')							as account,
 			try_cast(try_cast(amount as decimal(10,2)) as int)	as amount,
 			Case 
-				When k_symbol = '"POJISTNE"' Then 'insurrance payment'
+				When k_symbol = '"POJISTNE"' Then 'insurance payment'
 				When k_symbol = '"SIPO"'	Then 'household'
 				When k_symbol = '"LEASING"' Then 'leasing'
 				When k_symbol = '"UVER"' Then 'loan payment'
