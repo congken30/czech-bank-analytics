@@ -31,7 +31,7 @@
 <img width="60%" height="732" alt="gold_card_cross_sell" src="https://github.com/user-attachments/assets/2e772cab-8ff8-44bc-a01d-7b179c8df2b2" />
 
 ## Loan Penetration 
-<img width="1306" height="735" alt="loan_penetration" src="https://github.com/user-attachments/assets/ae61437f-9877-42d7-a01b-826b7b4a9717" />
+<img width="60%" height="735" alt="loan_penetration" src="https://github.com/user-attachments/assets/ae61437f-9877-42d7-a01b-826b7b4a9717" />
 
 ## Customer Lifetime Value 
-<img width="1303" height="733" alt="customer_lifetime_value" src="https://github.com/user-attachments/assets/370f9610-f27d-4861-a008-e0b3825a7ad3" />
+<img width="60%" height="733" alt="customer_lifetime_value" src="https://github.com/user-attachments/assets/370f9610-f27d-4861-a008-e0b3825a7ad3" />
