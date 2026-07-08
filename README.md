@@ -7,6 +7,10 @@ End-to-end banking analytics project: SQL Server medallion architecture (Bronze 
 <img width="45%" height="45%" alt="loan_penetration" src="https://github.com/user-attachments/assets/cfc7e889-701d-4dcb-af7b-55aea4068ee8" />
 <img width="45%" height="45%" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/d5d3949d-bedb-4b5f-82dc-1c5dd214003b" />
 
+## Key Insights 
+- Czech Bank has 4500 Account, but Top-100 lifetime value accounts for ($612M) nearly 10% of total volumne ($6,361M).
+- Total Loan Account just have 15,6%, while 1997 the loan uptake rate is 4,36%; simultaneously number of new account also surged in 1997.
+- Just Top 50 High-Risk Borrowers accounted for ($10M) 12,5% of Total Loan Amount ($80M)
 
 ## Data Model - Galaxy Schema 
 <img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/20008287-b28d-4f15-91b4-0a406525d62e" />.
