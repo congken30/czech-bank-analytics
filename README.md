@@ -9,7 +9,8 @@ End-to-end banking analytics project: SQL Server medallion architecture (Bronze 
 
 
 ## Data Model - Galaxy Schema 
-<img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/20008287-b28d-4f15-91b4-0a406525d62e" />
+<img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/20008287-b28d-4f15-91b4-0a406525d62e" />.
+
 Three fact tables (fact_trans,fact_loan, fact_orders) share conformed dimensions (dim_account, dim_client, dim_district, dim_ date, dim_disp) - a galaxy schema. dim_account acts as a bridge enable cross-fact analysis.
 
 ## Stakeholders & Business Questions 
