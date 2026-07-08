@@ -19,7 +19,7 @@ Three fact tables (fact_trans,fact_loan, fact_orders) share conformed dimensions
 Full requirement document with personas requests : [Full Requirement](docs/stakeholder_requirements.md).
 
 ## Repository Structure 
-```text
+```
 czech-bank-analytics/
 ├── [dashboard/](dashboard/)          # Exports of all 12 dashboard
 ├── [datasets/](datasets/)           # Berka source CSVs
