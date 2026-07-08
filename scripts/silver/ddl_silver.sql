@@ -10,7 +10,7 @@ Script Purpose:
 */
 
 
---Create schema silver;
+Create schema silver;
 
 -- ===============================
 -- DROP theo thứ tự child → parent
