@@ -19,18 +19,19 @@ Three fact tables (fact_trans,fact_loan, fact_orders) share conformed dimensions
 Full requirement document with personas requests : [Full Requirement](docs/stakeholder_requirements.md).
 
 ## Repository Structure 
+```text
 czech-bank-analytics/
-├── dashboard/          # Exports of all 12 dashboard 
-├── datasets/           # Berka source CSVs 
+├── [dashboard/](dashboard/)          # Exports of all 12 dashboard
+├── [datasets/](datasets/)           # Berka source CSVs
 ├── docs/
-│   ├── stakeholder_requirements.md   # 3 personas, 12 business questions
-│   ├── Berka Data dictionary.pdf
+│   ├── [stakeholder_requirements.md](docs/stakeholder_requirements.md)   # 3 personas, 12 business questions
+│   └── Berka Data dictionary.pdf
 ├── scripts/
-│   ├── init_database.sql             # Create DB + bronze/silver/gold schemas
+│   ├── [init_database.sql](scripts/init_database.sql)             # Create DB + bronze/silver/gold schemas
 │   ├── bronze/                       # DDL + BULK INSERT load procedure
 │   ├── silver/                       # DDL (PK/FK) + cleansing procedure
 │   └── gold/                         # Galaxy schema views + dim_date
-│   └──DAX-measure/                   # All 8 Table DAX measures
+└── DAX-measure/                      # All 8 Table DAX measures
 
 
 
