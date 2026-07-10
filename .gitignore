@@ -1,0 +1,5 @@
+# Data qua lon - tai tu nguon, xem datasets/README.md
+datasets/trans.csv
+
+# Power BI temp
+*.pbix.tmp
