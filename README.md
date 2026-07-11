@@ -6,16 +6,17 @@ End-to-end banking analytics project: SQL Server medallion architecture (Bronze 
 <img width="45%" height="45%" alt="regional_portfolio_overview" src="https://github.com/user-attachments/assets/9198f125-6d4b-4430-82cf-4c129c0d9acf" />
 <img width="45%" height="45%" alt="loan_penetration" src="https://github.com/user-attachments/assets/cfc7e889-701d-4dcb-af7b-55aea4068ee8" />
 <img width="45%" height="45%" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/d5d3949d-bedb-4b5f-82dc-1c5dd214003b" />
+[View all 12 dashboard pages](dashboard/dashboard_image.md)
 
 ## Key Insights 
 - Czech Bank has 4500 Account, but Top-100 lifetime value accounts for ($612M) nearly 10% of total volume ($6,361M).
 - Only 15.6% of accounts hold a loan; loan uptake peaked at 4.36% in 1997, coinciding with the surge in new account openings.
-- Just Top 50 High-Risk Borrowers accounted for ($10M) 12.5% of Total Loan Amount ($80M)
+- Just Top 50 High-Risk Borrowers accounted for 12.5% ($10M) of Total Loan Amount ($80M).
 
 ## Data Model - Galaxy Schema 
 <img width="60%" height="60%" alt="image" src="https://github.com/user-attachments/assets/20008287-b28d-4f15-91b4-0a406525d62e" />.
 
-Three fact tables (fact_trans,fact_loan, fact_orders) share conformed dimensions (dim_account, dim_client, dim_district, dim_ date, dim_disp) - a galaxy schema. dim_account acts as a bridge enable cross-fact analysis.
+Three fact tables (fact_trans,fact_loan, fact_orders) share conformed dimensions (dim_account, dim_client, dim_district, dim_date, dim_disp) - a galaxy schema. dim_account acts as a bridge enables cross-fact analysis.
 
 ## Stakeholders & Business Questions 
 #### Q1-Q4 : regional MIS, product holding, dormancy detection, abnormal balance decline
@@ -38,8 +39,8 @@ czech-bank-analytics/
 │   ├── bronze/                       # DDL + BULK INSERT load procedure
 │   ├── silver/                       # DDL (PK/FK) + cleansing procedure
 │   └── gold/                         # Galaxy schema views + dim_date
-│   └── DAX-measure/                  # All 8 Table DAX measures
- 
+│   └── DAX_measure/                  # All 8 Table files TMDL DAX measures
+```
 
 
 
