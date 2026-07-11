@@ -6,6 +6,7 @@ End-to-end banking analytics project: SQL Server medallion architecture (Bronze 
 <img width="45%" height="45%" alt="regional_portfolio_overview" src="https://github.com/user-attachments/assets/9198f125-6d4b-4430-82cf-4c129c0d9acf" />
 <img width="45%" height="45%" alt="loan_penetration" src="https://github.com/user-attachments/assets/cfc7e889-701d-4dcb-af7b-55aea4068ee8" />
 <img width="45%" height="45%" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/d5d3949d-bedb-4b5f-82dc-1c5dd214003b" />
+
 → [View all 12 dashboard pages](dashboard/dashboard_image.md)
 
 ## Key Insights 
