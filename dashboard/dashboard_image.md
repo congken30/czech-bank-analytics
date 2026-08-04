@@ -1,7 +1,7 @@
 # Dashboard 
 
 ## Regional Portfolio Overview 
-<img width="60%" height="60%" alt="Regional Portfolio Overview" src="https://github.com/user-attachments/assets/78942610-d6b1-4a46-946d-9d910ac21aba" />
+<img width="60%" height="60%" alt="Screenshot 2026-08-04 081650" src="https://github.com/user-attachments/assets/61a5db0e-75b1-4e70-9865-24d247d81d4c" />
 
 ## Product Holding Ratio
 <img width="60%" height="60%" alt="Product Holding Ratio" src="https://github.com/user-attachments/assets/7d2e3d30-1cc2-47d5-8239-e4fef13866fb" />
