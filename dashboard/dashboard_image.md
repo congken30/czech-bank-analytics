@@ -1,13 +1,13 @@
 # Dashboard 
 
 ## Regional Portfolio Overview 
-<img width="1371" height="773" alt="Regional Portfolio Overview" src="https://github.com/user-attachments/assets/78942610-d6b1-4a46-946d-9d910ac21aba" />
+<img width="60%" height="60%" alt="Regional Portfolio Overview" src="https://github.com/user-attachments/assets/78942610-d6b1-4a46-946d-9d910ac21aba" />
 
 ## Product Holding Ratio
-<img width="1308" height="735" alt="Product Holding Ratio" src="https://github.com/user-attachments/assets/7d2e3d30-1cc2-47d5-8239-e4fef13866fb" />
+<img width="60%" height="60%" alt="Product Holding Ratio" src="https://github.com/user-attachments/assets/7d2e3d30-1cc2-47d5-8239-e4fef13866fb" />
 
 ## Dormant Account Detection 
-<img width="1308" height="737" alt="Dormant Account Detection" src="https://github.com/user-attachments/assets/8a091d3b-6a04-45f5-8eae-27a88da03b7e" />
+<img width="60%" height="60%" alt="Dormant Account Detection" src="https://github.com/user-attachments/assets/8a091d3b-6a04-45f5-8eae-27a88da03b7e" />
 
 ## Abnormal Balance Decline 
 <img width="60%" height="60%" alt="Abnormal Balance Decline" src="https://github.com/user-attachments/assets/e3fb4b59-20f7-4ba5-9bc2-0241b73b6239" />
