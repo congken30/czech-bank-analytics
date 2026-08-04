@@ -1,37 +1,37 @@
 # Dashboard 
 
 ## Regional Portfolio Overview 
-<img width="60%" height="736" alt="regional_portfolio_overview" src="https://github.com/user-attachments/assets/75fc0ea7-3cdf-47ef-8e2d-6b4a91f3d56e" />
+<img width="1371" height="773" alt="Regional Portfolio Overview" src="https://github.com/user-attachments/assets/78942610-d6b1-4a46-946d-9d910ac21aba" />
 
 ## Product Holding Ratio
-<img width="60%" height="737" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/10c0b4cc-291d-413d-97ec-f2b1f013ffbd" />
+<img width="1308" height="735" alt="Product Holding Ratio" src="https://github.com/user-attachments/assets/7d2e3d30-1cc2-47d5-8239-e4fef13866fb" />
 
 ## Dormant Account Detection 
-<img width="60%" height="737" alt="dormant_account_detection" src="https://github.com/user-attachments/assets/9f8e263f-5405-441e-83f0-25b10dfae5cf" />
+<img width="1308" height="737" alt="Dormant Account Detection" src="https://github.com/user-attachments/assets/8a091d3b-6a04-45f5-8eae-27a88da03b7e" />
 
 ## Abnormal Balance Decline 
-<img width="60%" height="732" alt="abnormal_balance_decline" src="https://github.com/user-attachments/assets/9492b074-e8c9-40e1-9a42-3af4adce1370" />
+<img width="60%" height="60%" alt="Abnormal Balance Decline" src="https://github.com/user-attachments/assets/e3fb4b59-20f7-4ba5-9bc2-0241b73b6239" />
 
 ## Non-Performing Loan Ratio 
-<img width="60%" height="737" alt="NPL_ratio" src="https://github.com/user-attachments/assets/599c5f76-3977-4939-be44-0c08075d8df7" />
+<img width="60%" height="60%" alt="Non-Performing Loan Ratio" src="https://github.com/user-attachments/assets/134e1d20-3494-414f-8a17-4e0396e8ca26" />
 
 ## Risk Factor Comparison
-<img width="60%" height="735" alt="risk_factor_comparison" src="https://github.com/user-attachments/assets/6ebc5571-a0b5-4e70-89c4-d2d489d13447" />
+<img width="60%" height="60%" alt="Risk Factor Comparison" src="https://github.com/user-attachments/assets/2887e529-d8bf-4941-9eb5-5459623308e8" />
 
 ## Portfolio Concentration Rate 
-<img width="60%" height="737" alt="portfolio_concentration_rate" src="https://github.com/user-attachments/assets/3c04e19f-22f0-4d9d-bf0d-7d3b535d8d75" />
+<img width="60%" height="60%" alt="Portfolio Concentration Rate" src="https://github.com/user-attachments/assets/72de584b-b99c-4f48-b89a-c97d53a9c6d5" />
 
 ## Behavioral Early Warning 
-<img width="60%" height="732" alt="behavioral_early_warning" src="https://github.com/user-attachments/assets/3069bc85-3ded-4960-9b6c-d548e8493d7f" />
+<img width="60%" height="60%" alt="Behavioral Early Warning" src="https://github.com/user-attachments/assets/bf718b06-61be-4900-98b3-7839d7f35b1c" />
 
 ## Behavioral Customer Segmentation 
-<img width="60%" height="735" alt="behavioral_customer_segmentation" src="https://github.com/user-attachments/assets/a554c235-6f0c-481d-8a94-74e931bc24a9" />
+<img width="60%" height="60%" alt="Behavioral Customer Segmentation" src="https://github.com/user-attachments/assets/0bb6f994-ccf2-4133-b1e6-48e16fd36b47" />
 
 ## Gold Card Cross-Sell 
-<img width="60%" height="732" alt="gold_card_cross_sell" src="https://github.com/user-attachments/assets/2e772cab-8ff8-44bc-a01d-7b179c8df2b2" />
+<img width="60%" height="60%" alt="Gold Card Cross-Sell" src="https://github.com/user-attachments/assets/b4361d15-6eca-4c0a-9bc3-1045f799a854" />
 
 ## Loan Penetration 
-<img width="60%" height="735" alt="loan_penetration" src="https://github.com/user-attachments/assets/ae61437f-9877-42d7-a01b-826b7b4a9717" />
+<img width="60%" height="60%" alt="Loan Penetration" src="https://github.com/user-attachments/assets/37b66626-ee99-4e77-8c94-a8cc60c5706c" />
 
 ## Customer Lifetime Value 
-<img width="60%" height="733" alt="customer_lifetime_value" src="https://github.com/user-attachments/assets/370f9610-f27d-4861-a008-e0b3825a7ad3" />
+<img width="60%" height="60%" alt="Customer Lifetime Value" src="https://github.com/user-attachments/assets/75ea0388-e011-45f1-853e-927f3796b7c9" />
