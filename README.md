@@ -2,10 +2,10 @@
 End-to-end banking analytics project: SQL Server medallion architecture (Bronze → Silver → Gold) feeding a 12-page Power BI dashboard that answers 12 real business questions from 3 executive stakeholders — covering NPL monitoring, behavioral early-warning for loan default, customer segmentation, and cross-sell targeting.
 
 ## Dashboard  
-<img width="45%" height="45%" alt="customer_lifetime_value" src="https://github.com/user-attachments/assets/6219e03b-e699-4da0-b84d-b3ea85651121" />
-<img width="45%" height="45%" alt="regional_portfolio_overview" src="https://github.com/user-attachments/assets/9198f125-6d4b-4430-82cf-4c129c0d9acf" />
-<img width="45%" height="45%" alt="loan_penetration" src="https://github.com/user-attachments/assets/cfc7e889-701d-4dcb-af7b-55aea4068ee8" />
-<img width="45%" height="45%" alt="product_holding_ratio" src="https://github.com/user-attachments/assets/d5d3949d-bedb-4b5f-82dc-1c5dd214003b" />
+<img width="45%" height="45%" alt="Screenshot 2026-08-04 081650" src="https://github.com/user-attachments/assets/61a5db0e-75b1-4e70-9865-24d247d81d4c" />
+<img width="45%" height="45%" alt="Loan Penetration" src="https://github.com/user-attachments/assets/37b66626-ee99-4e77-8c94-a8cc60c5706c" />
+<img width="45%" height="45%" alt="Customer Lifetime Value" src="https://github.com/user-attachments/assets/75ea0388-e011-45f1-853e-927f3796b7c9" />
+<img width="45%" height="45%" alt="Product Holding Ratio" src="https://github.com/user-attachments/assets/7d2e3d30-1cc2-47d5-8239-e4fef13866fb" />
 
 → [View all 12 dashboard pages](dashboard/dashboard_image.md)
 
